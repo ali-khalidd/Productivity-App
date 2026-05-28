@@ -24,36 +24,34 @@ const AppState = {
         pendingReward: 0
     },
     rewards: {
-        // Duration in hours → coins earned for full completion
-        0.00833: 1,    // 30 seconds (test)
-        1: 100,         // 1 hour
-        2: 200,         // 2 hours
-        4: 500,         // 4 hours
-        6: 750          // 6 hours
+        0.00833: 1,
+        1: 100,
+        2: 200,
+        4: 500,
+        6: 750
     },
     shop: {
         items: {
             backgrounds: [
-                { id: 'bg_rainy', name: 'Rainy Window', price: 50, icon: '🌧️', color: '#8ba4be' },
-                { id: 'bg_fireplace', name: 'Cozy Fireplace', price: 75, icon: '🔥', color: '#c9785a' },
-                { id: 'bg_forest', name: 'Forest Morning', price: 60, icon: '🌲', color: '#8b9d83' },
-                { id: 'bg_sunset', name: 'Sunset Desk', price: 80, icon: '🌅', color: '#d4a843' },
-                { id: 'bg_starry', name: 'Starry Night', price: 100, icon: '✨', color: '#2d3561' },
-                { id: 'bg_cafe', name: 'Warm Cafe', price: 65, icon: '☕', color: '#a08060' }
+                { id: 'bg_rainy', name: 'Rainy Window', price: 50, image: 'assets/pixel-art/backgrounds/rainy.png' },
+                { id: 'bg_fireplace', name: 'Cozy Fireplace', price: 75, image: 'assets/pixel-art/backgrounds/fireplace.png' },
+                { id: 'bg_forest', name: 'Forest Morning', price: 60, image: 'assets/pixel-art/backgrounds/forest.png' },
+                { id: 'bg_sunset', name: 'Sunset Desk', price: 80, image: 'assets/pixel-art/backgrounds/sunset.png' },
+                { id: 'bg_starry', name: 'Starry Night', price: 100, image: 'assets/pixel-art/backgrounds/starry.png' },
+                { id: 'bg_cafe', name: 'Warm Cafe', price: 65, image: 'assets/pixel-art/backgrounds/cafe.png' }
             ],
             jars: [
-                { id: 'jar_classic', name: 'Classic Glass', price: 0, icon: '🫙', isDefault: true },
-                { id: 'jar_mason', name: 'Vintage Mason', price: 30, icon: '🏺' },
-                { id: 'jar_ceramic', name: 'Ceramic Pot', price: 45, icon: '🏺' },
-                { id: 'jar_crystal', name: 'Crystal Jar', price: 120, icon: '💎' }
+                { id: 'jar_classic', name: 'Classic Glass', price: 0, image: 'assets/pixel-art/jars/jar_classic.png', isDefault: true },
+                { id: 'jar_mason', name: 'Vintage Mason', price: 30, image: 'assets/pixel-art/jars/jar_mason.png' },
+                { id: 'jar_ceramic', name: 'Ceramic Pot', price: 45, image: 'assets/pixel-art/jars/jar_ceramic.png' },
+                { id: 'jar_crystal', name: 'Crystal Jar', price: 120, image: 'assets/pixel-art/jars/jar_crystal.png' }
             ],
             decorations: [
-                { id: 'dec_fairy', name: 'Fairy Lights', price: 40, icon: '✨', type: 'particles' },
-                { id: 'dec_plant', name: 'Potted Plant', price: 35, icon: '🪴', type: 'static' },
-                { id: 'dec_cat', name: 'Sleeping Cat', price: 55, icon: '🐱', type: 'static' },
-                { id: 'dec_coffee', name: 'Coffee Cup', price: 25, icon: '☕', type: 'static' },
-                { id: 'dec_books', name: 'Stack of Books', price: 30, icon: '📚', type: 'static' },
-                { id: 'dec_plant2', name: 'Hanging Plant', price: 45, icon: '🌿', type: 'static' }
+                { id: 'dec_fairy', name: 'Fairy Lights', price: 40, image: 'assets/pixel-art/decorations/fairy.png', type: 'draggable' },
+                { id: 'dec_plant', name: 'Potted Plant', price: 35, image: 'assets/pixel-art/decorations/plant.png', type: 'draggable' },
+                { id: 'dec_cat', name: 'Sleeping Cat', price: 55, image: 'assets/pixel-art/decorations/cat.png', type: 'draggable' },
+                { id: 'dec_coffee', name: 'Coffee Cup', price: 25, image: 'assets/pixel-art/decorations/coffee.png', type: 'draggable' },
+                { id: 'dec_books', name: 'Stack of Books', price: 30, image: 'assets/pixel-art/decorations/books.png', type: 'draggable' }
             ]
         }
     },
@@ -63,7 +61,8 @@ const AppState = {
             background: null,
             jar: 'jar_classic',
             decorations: []
-        }
+        },
+        placedDecorations: []
     },
     history: {
         sessions: [],
@@ -91,7 +90,7 @@ const DOM = {
     stopBtn: document.getElementById('stop-btn'),
     progressBar: document.getElementById('progress-fill'),
     progressText: document.getElementById('progress-text'),
-    jarFill: document.getElementById('jar-fill'),
+    jarPixelArt: document.getElementById('jar-pixel-art'),
     jarCoins: document.getElementById('jar-coins'),
     jarFillText: document.getElementById('jar-fill-text'),
     jarReward: document.getElementById('jar-reward'),
@@ -111,7 +110,7 @@ const DOM = {
     totalHours: document.getElementById('total-hours'),
     totalCoinsEarned: document.getElementById('total-coins-earned'),
     bgLayer: document.getElementById('bg-layer'),
-    floatingDecorations: document.getElementById('floating-decorations'),
+    placedDecorations: document.getElementById('placed-decorations'),
     audioToggle: document.getElementById('audio-toggle'),
     audioOptions: document.getElementById('audio-options')
 };
@@ -124,10 +123,12 @@ function init() {
     loadState();
     setupEventListeners();
     setupTabDetection();
+    setupDragAndDrop();
     renderShop('backgrounds');
     renderInventory('backgrounds');
     updateUI();
     applyEquippedItems();
+    renderPlacedDecorations();
     updateHistoryUI();
 }
 
@@ -316,8 +317,10 @@ function updateTimer() {
 }
 
 function addCoinToJar() {
-    const coin = document.createElement('div');
+    const coin = document.createElement('img');
+    coin.src = 'assets/pixel-art/coins/coin.png';
     coin.className = 'coin';
+    coin.alt = 'coin';
     DOM.jarCoins.appendChild(coin);
     
     // Play subtle coin sound if audio is enabled
@@ -485,12 +488,12 @@ function renderShop(category) {
         const itemEl = document.createElement('div');
         itemEl.className = `shop-item ${isPurchased ? 'purchased' : ''}`;
         itemEl.innerHTML = `
-            <div class="item-preview" style="background: ${item.color || 'var(--warm-white)'};">
-                ${item.icon}
+            <div class="item-preview">
+                <img src="${item.image}" alt="${item.name}" class="pixel-art">
             </div>
             <span class="item-name">${item.name}</span>
             <span class="item-price">
-                <span class="coin-icon">🪙</span> ${item.price}
+                <img src="assets/pixel-art/coins/coin.png" class="pixel-icon-small" alt="coin"> ${item.price}
             </span>
             <button class="buy-btn" ${isPurchased || !canAfford ? 'disabled' : ''}>
                 ${isPurchased ? 'Owned' : 'Buy'}
@@ -541,20 +544,21 @@ function renderInventory(category) {
     DOM.inventoryItems.innerHTML = '';
 
     if (purchasedItems.length === 0) {
-        DOM.inventoryItems.innerHTML = '<p style="color: var(--brown); text-align: center; grid-column: 1/-1;">No items purchased yet. Visit the shop!</p>';
+        DOM.inventoryItems.innerHTML = '<p style="color: var(--pixel-light-brown); text-align: center; grid-column: 1/-1;">No items purchased yet. Visit the shop!</p>';
     } else {
         purchasedItems.forEach(item => {
             const isEquipped = isItemEquipped(item);
+            const isDraggable = item.type === 'draggable';
 
             const itemEl = document.createElement('div');
             itemEl.className = 'inventory-item';
             itemEl.innerHTML = `
-                <div class="item-preview" style="background: ${item.color || 'var(--warm-white)'};">
-                    ${item.icon}
+                <div class="item-preview">
+                    <img src="${item.image}" alt="${item.name}" class="pixel-art">
                 </div>
                 <span class="item-name">${item.name}</span>
                 <button class="equip-btn ${isEquipped ? 'equipped' : ''}">
-                    ${isEquipped ? 'Equipped' : 'Equip'}
+                    ${isEquipped ? 'Equipped' : (isDraggable ? 'Place' : 'Equip')}
                 </button>
             `;
 
@@ -586,11 +590,16 @@ function toggleEquip(item) {
     } else if (item.id.startsWith('jar_')) {
         AppState.inventory.equipped.jar = item.id;
     } else if (item.id.startsWith('dec_')) {
-        const index = AppState.inventory.equipped.decorations.indexOf(item.id);
-        if (index > -1) {
-            AppState.inventory.equipped.decorations.splice(index, 1);
+        if (item.type === 'draggable') {
+            // For draggable items, place them on screen
+            placeDecoration(item);
         } else {
-            AppState.inventory.equipped.decorations.push(item.id);
+            const index = AppState.inventory.equipped.decorations.indexOf(item.id);
+            if (index > -1) {
+                AppState.inventory.equipped.decorations.splice(index, 1);
+            } else {
+                AppState.inventory.equipped.decorations.push(item.id);
+            }
         }
     }
 
@@ -620,12 +629,12 @@ function updateActiveItemsDisplay() {
     });
 
     if (items.length === 0) {
-        DOM.activeItems.innerHTML = '<span style="color: var(--brown);">No items equipped</span>';
+        DOM.activeItems.innerHTML = '<span style="color: var(--pixel-light-brown);">No items equipped</span>';
     } else {
         items.forEach(item => {
             const el = document.createElement('div');
             el.className = 'active-item';
-            el.innerHTML = `<span>${item.icon}</span> ${item.name}`;
+            el.innerHTML = `<img src="${item.image}" class="pixel-icon-small" alt=""> ${item.name}`;
             DOM.activeItems.appendChild(el);
         });
     }
@@ -638,43 +647,141 @@ function applyEquippedItems() {
     if (equipped.background) {
         const bg = AppState.shop.items.backgrounds.find(b => b.id === equipped.background);
         if (bg) {
-            DOM.bgLayer.style.background = bg.color;
+            DOM.bgLayer.style.backgroundImage = `url('${bg.image}')`;
         }
     } else {
-        DOM.bgLayer.style.background = 'var(--cream)';
+        DOM.bgLayer.style.backgroundImage = 'none';
+        DOM.bgLayer.style.backgroundColor = 'var(--pixel-bg)';
     }
 
     // Apply jar skin
     if (equipped.jar) {
         const jar = AppState.shop.items.jars.find(j => j.id === equipped.jar);
-        if (jar && jar.id === 'jar_crystal') {
-            document.getElementById('jar-glass').style.borderColor = 'rgba(180, 200, 220, 0.6)';
-            document.getElementById('jar-glass').style.background = 'rgba(180, 200, 220, 0.1)';
-        } else if (jar && jar.id === 'jar_ceramic') {
-            document.getElementById('jar-glass').style.borderColor = 'rgba(180, 160, 140, 0.5)';
-            document.getElementById('jar-glass').style.background = 'rgba(180, 160, 140, 0.15)';
-        } else if (jar && jar.id === 'jar_mason') {
-            document.getElementById('jar-glass').style.borderColor = 'rgba(160, 180, 160, 0.5)';
-            document.getElementById('jar-glass').style.background = 'rgba(160, 180, 160, 0.1)';
-        } else {
-            // Classic
-            document.getElementById('jar-glass').style.borderColor = 'rgba(255, 255, 255, 0.4)';
-            document.getElementById('jar-glass').style.background = 'rgba(255, 255, 255, 0.15)';
+        if (jar) {
+            DOM.jarPixelArt.src = jar.image;
         }
     }
+}
 
-    // Apply decorations
-    DOM.floatingDecorations.innerHTML = '';
-    equipped.decorations.forEach(decId => {
-        const dec = AppState.shop.items.decorations.find(d => d.id === decId);
-        if (dec) {
-            if (dec.type === 'particles') {
-                createFloatingParticles(dec);
-            } else {
-                createStaticDecoration(dec);
-            }
-        }
+function renderPlacedDecorations() {
+    DOM.placedDecorations.innerHTML = '';
+    
+    AppState.inventory.placedDecorations.forEach((placed, index) => {
+        const dec = AppState.shop.items.decorations.find(d => d.id === placed.id);
+        if (!dec) return;
+
+        const el = document.createElement('div');
+        el.className = 'placed-item';
+        el.dataset.index = index;
+        el.style.left = `${placed.x}px`;
+        el.style.top = `${placed.y}px`;
+        el.innerHTML = `
+            <img src="${dec.image}" alt="${dec.name}">
+            <button class="remove-btn">&times;</button>
+        `;
+        
+        // Add drag functionality
+        setupDraggable(el, index);
+        
+        // Add remove functionality
+        const removeBtn = el.querySelector('.remove-btn');
+        removeBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            removePlacedDecoration(index);
+        });
+        
+        DOM.placedDecorations.appendChild(el);
     });
+}
+
+function setupDraggable(element, index) {
+    let isDragging = false;
+    let startX, startY, initialX, initialY;
+
+    element.addEventListener('mousedown', startDrag);
+    element.addEventListener('touchstart', startDrag, { passive: false });
+
+    function startDrag(e) {
+        if (e.target.classList.contains('remove-btn')) return;
+        
+        e.preventDefault();
+        isDragging = true;
+        element.classList.add('dragging');
+
+        const clientX = e.clientX || e.touches[0].clientX;
+        const clientY = e.clientY || e.touches[0].clientY;
+
+        startX = clientX - element.offsetLeft;
+        startY = clientY - element.offsetTop;
+
+        document.addEventListener('mousemove', drag);
+        document.addEventListener('touchmove', drag, { passive: false });
+        document.addEventListener('mouseup', stopDrag);
+        document.addEventListener('touchend', stopDrag);
+    }
+
+    function drag(e) {
+        if (!isDragging) return;
+        e.preventDefault();
+
+        const clientX = e.clientX || e.touches[0].clientX;
+        const clientY = e.clientY || e.touches[0].clientY;
+
+        let newX = clientX - startX;
+        let newY = clientY - startY;
+
+        // Keep within window bounds
+        newX = Math.max(0, Math.min(newX, window.innerWidth - element.offsetWidth));
+        newY = Math.max(0, Math.min(newY, window.innerHeight - element.offsetHeight));
+
+        element.style.left = `${newX}px`;
+        element.style.top = `${newY}px`;
+    }
+
+    function stopDrag() {
+        if (!isDragging) return;
+        isDragging = false;
+        element.classList.remove('dragging');
+
+        // Save position
+        const rect = element.getBoundingClientRect();
+        AppState.inventory.placedDecorations[index].x = rect.left;
+        AppState.inventory.placedDecorations[index].y = rect.top;
+        saveState();
+
+        document.removeEventListener('mousemove', drag);
+        document.removeEventListener('touchmove', drag);
+        document.removeEventListener('mouseup', stopDrag);
+        document.removeEventListener('touchend', stopDrag);
+    }
+}
+
+function placeDecoration(item) {
+    // Place in a random position near the center but not overlapping too much
+    const centerX = window.innerWidth / 2;
+    const centerY = window.innerHeight / 2;
+    const offsetX = (Math.random() - 0.5) * 300;
+    const offsetY = (Math.random() - 0.5) * 200;
+    
+    const placedItem = {
+        id: item.id,
+        x: centerX + offsetX - 32,
+        y: centerY + offsetY - 32
+    };
+    
+    AppState.inventory.placedDecorations.push(placedItem);
+    renderPlacedDecorations();
+    saveState();
+}
+
+function removePlacedDecoration(index) {
+    AppState.inventory.placedDecorations.splice(index, 1);
+    renderPlacedDecorations();
+    saveState();
+}
+
+function setupDragAndDrop() {
+    // Drag and drop is handled per-item in renderPlacedDecorations
 }
 
 function createFloatingParticles(decoration) {
@@ -685,12 +792,13 @@ function createFloatingParticles(decoration) {
         particle.style.top = `${Math.random() * 100}%`;
         particle.style.animationDelay = `${Math.random() * 15}s`;
         particle.style.animationDuration = `${10 + Math.random() * 10}s`;
-        DOM.floatingDecorations.appendChild(particle);
+        DOM.placedDecorations.appendChild(particle);
     }
 }
 
 function createStaticDecoration(decoration) {
     const el = document.createElement('div');
+    el.className = 'placed-item static';
     el.style.cssText = `
         position: absolute;
         font-size: 3rem;
@@ -709,9 +817,9 @@ function createStaticDecoration(decoration) {
     
     const pos = positions[Math.floor(Math.random() * positions.length)];
     Object.assign(el.style, pos);
-    el.textContent = decoration.icon;
+    el.innerHTML = `<img src="${decoration.image}" alt="${decoration.name}">`;
     
-    DOM.floatingDecorations.appendChild(el);
+    DOM.placedDecorations.appendChild(el);
 }
 
 // ==========================================
@@ -847,7 +955,7 @@ function playAmbientSound(soundType) {
             break;
     }
 
-    DOM.audioToggle.textContent = '🔊';
+    DOM.audioToggle.textContent = 'Sound';
 }
 
 function createRainSound(ctx, gainNode) {
@@ -959,7 +1067,7 @@ function stopAmbientSound() {
     }
     AppState.audio.isPlaying = false;
     AppState.audio.currentSound = null;
-    DOM.audioToggle.textContent = '🔇';
+    DOM.audioToggle.textContent = 'Mute';
     DOM.audioOptions.classList.add('hidden');
 }
 
@@ -1075,6 +1183,7 @@ function loadState() {
                     jar: 'jar_classic',
                     decorations: []
                 };
+                AppState.inventory.placedDecorations = data.inventory.placedDecorations || [];
             }
             
             if (data.history) {

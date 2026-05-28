@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Cosy Jar - Focus &amp; Flourish</title>
     <link rel="stylesheet" href="css/style.css">
-    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700&family=Playfair+Display:wght@400;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700&family=Press+Start+2P&display=swap" rel="stylesheet">
 </head>
 <body>
     <div id="app">
@@ -15,28 +15,28 @@
         <!-- Ambient Overlay -->
         <div id="ambient-overlay"></div>
         
-        <!-- Floating Decorations -->
-        <div id="floating-decorations"></div>
+        <!-- Draggable Decorations Container -->
+        <div id="placed-decorations"></div>
 
         <!-- Top Bar -->
         <header id="top-bar">
             <div id="streak-display">
-                <span class="streak-icon">🔥</span>
+                <img src="assets/pixel-art/decorations/fairy.png" class="pixel-icon-small" alt="streak">
                 <span id="streak-count">0</span> day streak
             </div>
             <div id="wallet-display">
-                <span class="coin-icon">🪙</span>
+                <img src="assets/pixel-art/coins/coin.png" class="pixel-icon-small" alt="coin">
                 <span id="coin-balance">0</span> coins
             </div>
-            <button id="shop-toggle" class="btn btn-secondary">🛒 Shop</button>
-            <button id="inventory-toggle" class="btn btn-secondary">🎨 Decorations</button>
-            <button id="history-toggle" class="btn btn-secondary">📜 History</button>
-            <button id="dev-give-coins" class="btn btn-secondary" title="Get 100 coins for testing">💰 Dev: +100</button>
+            <button id="shop-toggle" class="btn btn-secondary">Shop</button>
+            <button id="inventory-toggle" class="btn btn-secondary">Decorations</button>
+            <button id="history-toggle" class="btn btn-secondary">History</button>
+            <button id="dev-give-coins" class="btn btn-secondary" title="Get 100 coins for testing">+100</button>
         </header>
 
         <!-- Main Content -->
         <main id="main-content">
-            <h1 id="app-title">Cosy Jar</h1>
+            <h1 id="app-title">COSY JAR</h1>
             <p id="app-subtitle">Focus, fill your jar, and make it yours.</p>
 
             <!-- Timer Section -->
@@ -45,7 +45,7 @@
                 <div id="timer-label">Choose your focus time</div>
                 
                 <div id="duration-selector">
-                    <button class="duration-btn test-mode" data-duration="0.00833">30 Seconds (Test)</button>
+                    <button class="duration-btn test-mode" data-duration="0.00833">30s Test</button>
                     <button class="duration-btn" data-duration="1">1 Hour</button>
                     <button class="duration-btn" data-duration="2">2 Hours</button>
                     <button class="duration-btn" data-duration="4">4 Hours</button>
@@ -69,14 +69,11 @@
             <!-- Jar Section -->
             <section id="jar-section">
                 <div id="jar-container">
-                    <div id="jar-glass">
-                        <div id="jar-fill"></div>
-                        <div id="jar-coins"></div>
-                        <div id="jar-label">
-                            <span id="jar-fill-text">0 / 0 coins</span>
-                        </div>
+                    <img id="jar-pixel-art" src="assets/pixel-art/jars/jar_classic.png" alt="jar">
+                    <div id="jar-coins"></div>
+                    <div id="jar-label">
+                        <span id="jar-fill-text">0 / 0 coins</span>
                     </div>
-                    <div id="jar-shadow"></div>
                 </div>
                 <div id="jar-reward" class="hidden">
                     <p>Session complete! You earned <span id="reward-amount">0</span> coins!</p>
@@ -162,13 +159,13 @@
 
         <!-- Audio Controls -->
         <div id="audio-controls">
-            <button id="audio-toggle" class="btn btn-icon">🔇</button>
+            <button id="audio-toggle" class="btn btn-icon">Sound</button>
             <div id="audio-options" class="hidden">
-                <button class="audio-option" data-sound="rain">🌧️ Rain</button>
-                <button class="audio-option" data-sound="fire">🔥 Fireplace</button>
-                <button class="audio-option" data-sound="cafe">☕ Cafe</button>
-                <button class="audio-option" data-sound="forest">🌲 Forest</button>
-                <button class="audio-option" data-sound="none">🔇 None</button>
+                <button class="audio-option" data-sound="rain">Rain</button>
+                <button class="audio-option" data-sound="fire">Fireplace</button>
+                <button class="audio-option" data-sound="cafe">Cafe</button>
+                <button class="audio-option" data-sound="forest">Forest</button>
+                <button class="audio-option" data-sound="none">None</button>
             </div>
         </div>
     </div>
