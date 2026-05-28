@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cosy Jar - Focus &amp; Flourish</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700&family=Playfair+Display:wght@400;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div id="app">
+        <!-- Background Layer -->
+        <div id="bg-layer"></div>
+        
+        <!-- Ambient Overlay -->
+        <div id="ambient-overlay"></div>
+        
+        <!-- Floating Decorations -->
+        <div id="floating-decorations"></div>
+
+        <!-- Top Bar -->
+        <header id="top-bar">
+            <div id="streak-display">
+                <span class="streak-icon">🔥</span>
+                <span id="streak-count">0</span> day streak
+            </div>
+            <div id="wallet-display">
+                <span class="coin-icon">🪙</span>
+                <span id="coin-balance">0</span> coins
+            </div>
+            <button id="shop-toggle" class="btn btn-secondary">🛒 Shop</button>
+            <button id="inventory-toggle" class="btn btn-secondary">🎨 Decorations</button>
+            <button id="history-toggle" class="btn btn-secondary">📜 History</button>
+            <button id="dev-give-coins" class="btn btn-secondary" title="Get 100 coins for testing">💰 Dev: +100</button>
+        </header>
+
+        <!-- Main Content -->
+        <main id="main-content">
+            <h1 id="app-title">Cosy Jar</h1>
+            <p id="app-subtitle">Focus, fill your jar, and make it yours.</p>
+
+            <!-- Timer Section -->
+            <section id="timer-section">
+                <div id="timer-display">00:00:00</div>
+                <div id="timer-label">Choose your focus time</div>
+                
+                <div id="duration-selector">
+                    <button class="duration-btn test-mode" data-duration="0.00833">30 Seconds (Test)</button>
+                    <button class="duration-btn" data-duration="1">1 Hour</button>
+                    <button class="duration-btn" data-duration="2">2 Hours</button>
+                    <button class="duration-btn" data-duration="4">4 Hours</button>
+                    <button class="duration-btn" data-duration="6">6 Hours</button>
+                </div>
+
+                <div id="timer-controls">
+                    <button id="start-btn" class="btn btn-primary">Start Focus</button>
+                    <button id="pause-btn" class="btn btn-warning hidden">Pause</button>
+                    <button id="stop-btn" class="btn btn-danger hidden">Stop Early</button>
+                </div>
+
+                <div id="session-progress">
+                    <div id="progress-bar">
+                        <div id="progress-fill"></div>
+                    </div>
+                    <span id="progress-text">0%</span>
+                </div>
+            </section>
+
+            <!-- Jar Section -->
+            <section id="jar-section">
+                <div id="jar-container">
+                    <div id="jar-glass">
+                        <div id="jar-fill"></div>
+                        <div id="jar-coins"></div>
+                        <div id="jar-label">
+                            <span id="jar-fill-text">0 / 0 coins</span>
+                        </div>
+                    </div>
+                    <div id="jar-shadow"></div>
+                </div>
+                <div id="jar-reward" class="hidden">
+                    <p>Session complete! You earned <span id="reward-amount">0</span> coins!</p>
+                    <button id="claim-reward-btn" class="btn btn-primary">Claim Reward</button>
+                </div>
+            </section>
+        </main>
+
+        <!-- Shop Modal -->
+        <div id="shop-modal" class="modal hidden">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h2>Cosy Shop</h2>
+                    <button class="modal-close">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <div id="shop-categories">
+                        <button class="shop-tab active" data-category="backgrounds">Backgrounds</button>
+                        <button class="shop-tab" data-category="jars">Jar Skins</button>
+                        <button class="shop-tab" data-category="decorations">Decorations</button>
+                    </div>
+                    <div id="shop-items"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Inventory Modal -->
+        <div id="inventory-modal" class="modal hidden">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h2>Your Decorations</h2>
+                    <button class="modal-close">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <div id="inventory-categories">
+                        <button class="inventory-tab active" data-category="backgrounds">Backgrounds</button>
+                        <button class="inventory-tab" data-category="jars">Jar Skins</button>
+                        <button class="inventory-tab" data-category="decorations">Decorations</button>
+                    </div>
+                    <div id="inventory-items"></div>
+                    <div id="active-decoration-preview">
+                        <h3>Currently Active</h3>
+                        <div id="active-items"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- History Modal -->
+        <div id="history-modal" class="modal hidden">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h2>Session History</h2>
+                    <button class="modal-close">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <div id="session-stats">
+                        <div class="stat-card">
+                            <span class="stat-value" id="total-sessions">0</span>
+                            <span class="stat-label">Total Sessions</span>
+                        </div>
+                        <div class="stat-card">
+                            <span class="stat-value" id="total-hours">0</span>
+                            <span class="stat-label">Hours Focused</span>
+                        </div>
+                        <div class="stat-card">
+                            <span class="stat-value" id="total-coins-earned">0</span>
+                            <span class="stat-label">Total Coins Earned</span>
+                        </div>
+                    </div>
+                    <div id="session-list"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tab Switch Warning -->
+        <div id="tab-warning" class="hidden">
+            <div class="warning-content">
+                <p>Timer paused! Your jar stopped filling because you switched tabs.</p>
+                <p>Come back to continue focusing.</p>
+            </div>
+        </div>
+
+        <!-- Audio Controls -->
+        <div id="audio-controls">
+            <button id="audio-toggle" class="btn btn-icon">🔇</button>
+            <div id="audio-options" class="hidden">
+                <button class="audio-option" data-sound="rain">🌧️ Rain</button>
+                <button class="audio-option" data-sound="fire">🔥 Fireplace</button>
+                <button class="audio-option" data-sound="cafe">☕ Cafe</button>
+                <button class="audio-option" data-sound="forest">🌲 Forest</button>
+                <button class="audio-option" data-sound="none">🔇 None</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/app.js"></script>
+</body>
+</html>
