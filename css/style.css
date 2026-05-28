@@ -403,15 +403,15 @@ img {
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    min-height: 280px;
+    min-height: 340px;
 }
 
 #jar-pixel-art {
-    width: 200px;
-    height: 200px;
+    width: 280px;
+    height: 280px;
     image-rendering: pixelated;
     image-rendering: crisp-edges;
-    filter: drop-shadow(0 6px 12px rgba(0, 0, 0, 0.5));
+    filter: drop-shadow(0 8px 16px rgba(0, 0, 0, 0.6));
     transition: transform 0.2s;
 }
 
@@ -421,18 +421,18 @@ img {
 
 #jar-coins {
     position: absolute;
-    bottom: 30px;
+    bottom: 40px;
     left: 50%;
     transform: translateX(-50%);
     display: flex;
     flex-wrap: wrap;
     justify-content: center;
     align-items: flex-end;
-    width: 120px;
-    height: 80px;
+    width: 160px;
+    height: 120px;
     pointer-events: none;
-    gap: 3px;
-    padding: 4px;
+    gap: 4px;
+    padding: 6px;
     overflow: hidden;
 }
 
@@ -975,8 +975,8 @@ img {
     }
     
     #jar-pixel-art {
-        width: 150px;
-        height: 150px;
+        width: 220px;
+        height: 220px;
     }
     
     .btn {
