@@ -2,47 +2,82 @@
 // COIN SYSTEM (Simple & Reliable)
 // ==========================================
 
+console.log('coin-system.js loaded successfully');
+
 function spawnCoinInJar() {
-    const container = DOM.coinContainer || document.getElementById('coin-physics-container');
+    console.log('spawnCoinInJar called');
+    
+    // Get container - use DOM if available, otherwise query directly
+    let container;
+    if (typeof DOM !== 'undefined' && DOM.coinContainer) {
+        container = DOM.coinContainer;
+        console.log('Using DOM.coinContainer');
+    } else {
+        container = document.getElementById('coin-physics-container');
+        console.log('Using getElementById fallback');
+    }
+    
     if (!container) {
         console.error('Coin container not found!');
         return;
     }
     
+    console.log('Container found:', container);
+    
     // Create coin element
     const coin = document.createElement('img');
     coin.src = 'assets/pixel-art/coins/coin_fancy.png';
     coin.className = 'coin-drop';
+    coin.style.width = '32px';
+    coin.style.height = '32px';
+    coin.style.display = 'block';
     
-    // Random position within jar width (roughly centered, 32px coin, container is 200px)
-    const randomX = 20 + Math.random() * 148; // 20 to 168
+    // Random position within jar width
+    const randomX = 20 + Math.random() * 120;
     coin.style.left = randomX + 'px';
+    coin.style.top = '-40px';
     
-    // Start above container
-    coin.style.top = '0px';
+    console.log('Creating coin at X:', randomX);
     
     // Add to container
     container.appendChild(coin);
+    console.log('Coin added to container. Total children:', container.children.length);
     
-    // Play sound
-    try {
-        playCoinClink();
-    } catch(e) {}
-    
-    console.log('Coin spawned at X:', randomX);
+    // Remove coin after animation completes
+    setTimeout(() => {
+        if (coin.parentNode) {
+            coin.remove();
+        }
+    }, 2000);
 }
 
 function clearCoins() {
-    const container = DOM.coinContainer || document.getElementById('coin-physics-container');
+    console.log('clearCoins called');
+    let container;
+    if (typeof DOM !== 'undefined' && DOM.coinContainer) {
+        container = DOM.coinContainer;
+    } else {
+        container = document.getElementById('coin-physics-container');
+    }
+    
     if (container) {
         container.innerHTML = '';
+        console.log('Coins cleared');
     }
 }
 
 function playCoinClink() {
     try {
-        initAudioContext();
-        const ctx = AppState.audio.audioContext;
+        if (typeof initAudioContext === 'function') {
+            initAudioContext();
+        }
+        
+        let ctx;
+        if (typeof AppState !== 'undefined' && AppState.audio && AppState.audio.audioContext) {
+            ctx = AppState.audio.audioContext;
+        } else {
+            return; // Audio not ready, skip
+        }
         
         const oscillator = ctx.createOscillator();
         const gain = ctx.createGain();

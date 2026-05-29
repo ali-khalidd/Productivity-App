@@ -479,14 +479,14 @@ img {
 /* Coin drop animation */
 #coin-physics-container {
     position: absolute;
-    top: 60px;
+    top: 20px;
     left: 50%;
     transform: translateX(-50%);
     width: 200px;
     height: 240px;
     pointer-events: none;
-    z-index: 10;
-    overflow: hidden;
+    z-index: 100;
+    border: 2px dashed rgba(255, 255, 0, 0.3);
 }
 
 .coin-drop {
@@ -497,7 +497,8 @@ img {
     image-rendering: crisp-edges;
     animation: coin-fall 1.5s ease-in forwards;
     pointer-events: none;
-    z-index: 11;
+    z-index: 101;
+    opacity: 1;
 }
 
 @keyframes coin-fall {
@@ -505,17 +506,13 @@ img {
         transform: translateY(0) rotate(0deg);
         opacity: 1;
     }
-    60% {
-        transform: translateY(180px) rotate(180deg);
-        opacity: 1;
-    }
-    80% {
-        transform: translateY(200px) rotate(270deg);
+    70% {
+        transform: translateY(180px) rotate(250deg);
         opacity: 1;
     }
     100% {
         transform: translateY(200px) rotate(360deg);
-        opacity: 0.8;
+        opacity: 0.7;
     }
 }
 

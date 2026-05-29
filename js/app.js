@@ -157,6 +157,15 @@ function setupEventListeners() {
     DOM.pauseBtn.addEventListener('click', togglePause);
     DOM.stopBtn.addEventListener('click', stopTimer);
     DOM.claimRewardBtn.addEventListener('click', claimReward);
+    
+    // Test coin button
+    const testCoinBtn = document.getElementById('test-coin-btn');
+    if (testCoinBtn) {
+        testCoinBtn.addEventListener('click', () => {
+            console.log('Test coin button clicked');
+            spawnCoinInJar();
+        });
+    }
 
     // Modals
     document.getElementById('shop-toggle').addEventListener('click', () => {
@@ -370,8 +379,79 @@ function updateJarFrame(progress) {
 }
 
 function addCoinToJar() {
-    // Use the simple coin system from coin-system.js
-    spawnCoinInJar();
+    // Direct implementation - spawn a falling coin
+    const container = DOM.coinContainer || document.getElementById('coin-physics-container');
+    if (!container) {
+        console.error('Coin container not found!');
+        return;
+    }
+    
+    // Create coin element
+    const coin = document.createElement('img');
+    coin.src = 'assets/pixel-art/coins/coin_fancy.png';
+    coin.className = 'coin-drop';
+    coin.style.width = '32px';
+    coin.style.height = '32px';
+    coin.style.display = 'block';
+    
+    // Random position within jar width
+    const randomX = 20 + Math.random() * 120;
+    coin.style.left = randomX + 'px';
+    coin.style.top = '-40px';
+    
+    // Add to container
+    container.appendChild(coin);
+    
+    // Remove coin after animation completes
+    setTimeout(() => {
+        if (coin.parentNode) {
+            coin.remove();
+        }
+    }, 2000);
+    
+    // Play clink sound
+    try {
+        playCoinClink();
+    } catch(e) {}
+}
+
+function clearCoins() {
+    const container = DOM.coinContainer || document.getElementById('coin-physics-container');
+    if (container) {
+        container.innerHTML = '';
+    }
+}
+
+function playCoinClink() {
+    try {
+        if (typeof initAudioContext === 'function') {
+            initAudioContext();
+        }
+        
+        let ctx;
+        if (typeof AppState !== 'undefined' && AppState.audio && AppState.audio.audioContext) {
+            ctx = AppState.audio.audioContext;
+        } else {
+            return;
+        }
+        
+        const oscillator = ctx.createOscillator();
+        const gain = ctx.createGain();
+        
+        oscillator.connect(gain);
+        gain.connect(ctx.destination);
+        
+        oscillator.frequency.value = 1800 + Math.random() * 400;
+        oscillator.type = 'sine';
+        
+        gain.gain.setValueAtTime(0.08, ctx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.15);
+        
+        oscillator.start(ctx.currentTime);
+        oscillator.stop(ctx.currentTime + 0.15);
+    } catch (e) {
+        // Silent fail
+    }
 }
 
 function togglePause() {
