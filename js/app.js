@@ -799,10 +799,21 @@ function applyEquippedItems() {
         DOM.bgLayer.style.backgroundColor = 'var(--pixel-bg)';
     }
 
-    // Apply jar skin - use frame system
-    // If timer is not running, show empty frame
-    if (!AppState.timer.isRunning) {
-        DOM.jarPixelArt.src = AppState.jarFrames.empty;
+    // Apply jar skin
+    if (equipped.jar) {
+        const jar = AppState.shop.items.jars.find(j => j.id === equipped.jar);
+        if (jar) {
+            // Show the jar skin image when timer is not running
+            if (!AppState.timer.isRunning) {
+                DOM.jarPixelArt.src = jar.image;
+            }
+            // When timer is running, updateJarFrame() handles the frames
+        }
+    } else {
+        // Default to empty classic jar
+        if (!AppState.timer.isRunning) {
+            DOM.jarPixelArt.src = AppState.jarFrames.empty;
+        }
     }
 }
 
