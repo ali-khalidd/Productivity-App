@@ -30,6 +30,13 @@ const AppState = {
         4: 500,
         6: 750
     },
+    jarFrames: {
+        empty: 'assets/pixel-art/jars/frames/frame_00.png',
+        quarter: 'assets/pixel-art/jars/frames/frame_02.png',
+        half: 'assets/pixel-art/jars/frames/frame_05.png',
+        threeQuarters: 'assets/pixel-art/jars/frames/frame_06.png',
+        full: 'assets/pixel-art/jars/frames/frame_09.png'
+    },
     shop: {
         items: {
             backgrounds: [
@@ -292,7 +299,8 @@ function startTimer() {
     DOM.stopBtn.classList.remove('hidden');
     DOM.jarReward.classList.add('hidden');
 
-    // Clear previous coins
+    // Reset jar to empty
+    DOM.jarPixelArt.src = AppState.jarFrames.empty;
     DOM.jarCoins.innerHTML = '';
 
     AppState.timer.intervalId = setInterval(updateTimer, 1000);
@@ -320,19 +328,35 @@ function updateTimer() {
     DOM.progressBar.style.width = `${progress}%`;
     DOM.progressText.textContent = `${Math.floor(progress)}%`;
 
-    // Update jar fill
-    DOM.jarFill.style.height = `${progress}%`;
+    // Update jar frame based on progress
+    updateJarFrame(progress);
 
-    // Add coins to jar (based on reward table)
-    const durationHours = AppState.timer.selectedDuration;
-    const totalCoins = AppState.rewards[durationHours] || Math.ceil(durationHours * 60);
+    DOM.jarFillText.textContent = `${Math.floor(progress)}% Full`;
+}
+
+function updateJarFrame(progress) {
+    const frames = AppState.jarFrames;
+    let frameSrc = frames.empty;
     
-    // For very short durations, add a coin at 50% progress
-    if (durationHours < 0.01) {
-        if (progress >= 50 && AppState.timer.jarCoins < 1) {
-            AppState.timer.jarCoins = 1;
-            addCoinToJar();
-        }
+    if (progress >= 95) {
+        frameSrc = frames.full;
+    } else if (progress >= 70) {
+        frameSrc = frames.threeQuarters;
+    } else if (progress >= 45) {
+        frameSrc = frames.half;
+    } else if (progress >= 20) {
+        frameSrc = frames.quarter;
+    }
+    
+    DOM.jarPixelArt.src = frameSrc;
+}
+
+function addCoinToJar() {
+    // Coin sound effect only - visual handled by frame animation
+    if (AppState.audio.isPlaying) {
+        playCoinSound();
+    }
+}
     } else {
         // Calculate how many coins should be shown based on progress
         const expectedCoins = Math.floor((progress / 100) * totalCoins);
@@ -463,6 +487,9 @@ function showReward(amount) {
     DOM.rewardAmount.textContent = amount;
     DOM.jarReward.classList.remove('hidden');
     
+    // Show full jar when reward is ready
+    DOM.jarPixelArt.src = AppState.jarFrames.full;
+    
     // Temporarily store the reward amount
     AppState.coins.pendingReward = amount;
 }
@@ -473,9 +500,9 @@ function claimReward() {
     AppState.coins.totalEarned += amount;
     AppState.coins.pendingReward = 0;
 
-    // Clear jar
-    DOM.jarCoins.innerHTML = '';
-    DOM.jarFillText.textContent = '0 / 0 coins';
+    // Reset jar to empty
+    DOM.jarPixelArt.src = AppState.jarFrames.empty;
+    DOM.jarFillText.textContent = '0% Full';
     DOM.jarReward.classList.add('hidden');
     DOM.timerLabel.textContent = 'Choose your focus time';
 

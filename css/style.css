@@ -442,12 +442,16 @@ img {
 }
 
 #jar-pixel-art {
-    width: 280px;
-    height: 280px;
+    width: 240px;
+    height: 320px;
     image-rendering: pixelated;
     image-rendering: crisp-edges;
     filter: drop-shadow(0 8px 16px rgba(0, 0, 0, 0.6));
     transition: transform 0.2s;
+}
+
+#jar-pixel-art:hover {
+    transform: scale(1.05);
 }
 
 #jar-pixel-art:hover {
@@ -1010,8 +1014,8 @@ img {
     }
     
     #jar-pixel-art {
-        width: 220px;
-        height: 220px;
+        width: 200px;
+        height: 267px;
     }
     
     .btn {
