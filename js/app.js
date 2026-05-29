@@ -273,7 +273,11 @@ function createFloatingStars() {
 // ==========================================
 
 function startTimer() {
-    if (AppState.timer.isRunning) return;
+    console.log('startTimer called, duration:', AppState.timer.selectedDuration);
+    if (AppState.timer.isRunning) {
+        console.log('Timer already running, aborting');
+        return;
+    }
 
     AppState.timer.isRunning = true;
     AppState.timer.isPaused = false;
@@ -304,8 +308,6 @@ function startTimer() {
     // Reset jar to empty
     DOM.jarPixelArt.src = AppState.jarFrames.empty;
     clearCoins();
-    initCoinPhysics();
-    coinPhysics.start();
 
     AppState.timer.intervalId = setInterval(updateTimer, 1000);
     saveState();
@@ -319,6 +321,7 @@ function updateTimer() {
 
     // Check if timer is complete
     if (AppState.timer.elapsedTime >= AppState.timer.totalDuration) {
+        console.log('Timer complete!');
         completeTimer();
         return;
     }
@@ -340,9 +343,8 @@ function updateTimer() {
     const totalCoins = AppState.rewards[durationHours] || Math.ceil(durationHours * 60);
     const expectedCoins = Math.floor((progress / 100) * Math.min(totalCoins, 25));
     
-    // Debug: Log coin spawning
-    if (AppState.timer.jarCoins < expectedCoins) {
-        console.log('Spawning coin. Current:', AppState.timer.jarCoins, 'Expected:', expectedCoins);
+    // Spawn coins if needed
+    while (AppState.timer.jarCoins < expectedCoins) {
         AppState.timer.jarCoins++;
         addCoinToJar();
     }
@@ -447,11 +449,6 @@ function completeTimer() {
     clearInterval(AppState.timer.intervalId);
     AppState.timer.isRunning = false;
     AppState.timer.isPaused = false;
-    
-    // Stop coin physics
-    if (coinPhysics) {
-        coinPhysics.stop();
-    }
 
     const totalCoins = AppState.rewards[AppState.timer.selectedDuration] || Math.ceil(AppState.timer.selectedDuration * 60);
     const earnedCoins = Math.max(1, totalCoins);
