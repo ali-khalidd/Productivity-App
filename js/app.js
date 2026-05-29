@@ -98,7 +98,7 @@ const DOM = {
     progressBar: document.getElementById('progress-fill'),
     progressText: document.getElementById('progress-text'),
     jarPixelArt: document.getElementById('jar-pixel-art'),
-    jarCoins: document.getElementById('jar-coins'),
+    coinContainer: document.getElementById('coin-physics-container'),
     jarFillText: document.getElementById('jar-fill-text'),
     jarReward: document.getElementById('jar-reward'),
     rewardAmount: document.getElementById('reward-amount'),
@@ -303,7 +303,9 @@ function startTimer() {
 
     // Reset jar to empty
     DOM.jarPixelArt.src = AppState.jarFrames.empty;
-    DOM.jarCoins.innerHTML = '';
+    clearCoins();
+    initCoinPhysics();
+    coinPhysics.start();
 
     AppState.timer.intervalId = setInterval(updateTimer, 1000);
     saveState();
@@ -332,6 +334,16 @@ function updateTimer() {
 
     // Update jar frame based on progress
     updateJarFrame(progress);
+    
+    // Spawn falling coins based on progress
+    const durationHours = AppState.timer.selectedDuration;
+    const totalCoins = AppState.rewards[durationHours] || Math.ceil(durationHours * 60);
+    const expectedCoins = Math.floor((progress / 100) * Math.min(totalCoins, 25)); // Max 25 falling coins for performance
+    
+    while (AppState.timer.jarCoins < expectedCoins) {
+        AppState.timer.jarCoins++;
+        addCoinToJar();
+    }
 
     DOM.jarFillText.textContent = `${Math.floor(progress)}% Full`;
 }
@@ -353,11 +365,192 @@ function updateJarFrame(progress) {
     DOM.jarPixelArt.src = frameSrc;
 }
 
-function addCoinToJar() {
-    // Coin sound effect only - visual handled by frame animation
-    if (AppState.audio.isPlaying) {
-        playCoinSound();
+// ==========================================
+// COIN PHYSICS SYSTEM
+// ==========================================
+
+class CoinPhysics {
+    constructor(container) {
+        this.container = container;
+        this.coins = [];
+        this.gravity = 0.5;
+        this.bounceFactor = 0.4;
+        this.jarBottom = 220; // Bottom of jar area
+        this.jarLeft = 40;
+        this.jarRight = 148; // 180 - 32
+        this.coinSize = 32;
+        this.animationId = null;
+        this.isRunning = false;
     }
+    
+    start() {
+        if (this.isRunning) return;
+        this.isRunning = true;
+        this.animate();
+    }
+    
+    stop() {
+        this.isRunning = false;
+        if (this.animationId) {
+            cancelAnimationFrame(this.animationId);
+            this.animationId = null;
+        }
+    }
+    
+    spawnCoin() {
+        const coin = {
+            element: document.createElement('img'),
+            x: this.jarLeft + Math.random() * (this.jarRight - this.jarLeft - this.coinSize),
+            y: -40,
+            vx: (Math.random() - 0.5) * 2,
+            vy: 0,
+            rotation: Math.random() * 360,
+            vRotation: (Math.random() - 0.5) * 10,
+            settled: false,
+            bounced: false
+        };
+        
+        coin.element.src = 'assets/pixel-art/coins/coin_fancy.png';
+        coin.element.className = 'falling-coin';
+        coin.element.style.left = `${coin.x}px`;
+        coin.element.style.top = `${coin.y}px`;
+        
+        this.container.appendChild(coin.element);
+        this.coins.push(coin);
+        
+        // Play spawn sound
+        playCoinClink();
+    }
+    
+    animate() {
+        if (!this.isRunning) return;
+        
+        this.coins.forEach(coin => {
+            if (coin.settled) return;
+            
+            // Apply gravity
+            coin.vy += this.gravity;
+            coin.y += coin.vy;
+            coin.x += coin.vx;
+            coin.rotation += coin.vRotation;
+            
+            // Wall collisions
+            if (coin.x < this.jarLeft) {
+                coin.x = this.jarLeft;
+                coin.vx *= -0.5;
+            }
+            if (coin.x > this.jarRight - this.coinSize) {
+                coin.x = this.jarRight - this.coinSize;
+                coin.vx *= -0.5;
+            }
+            
+            // Floor collision with bounce
+            if (coin.y >= this.jarBottom - this.coinSize) {
+                if (!coin.bounced && Math.abs(coin.vy) > 2) {
+                    // Bounce
+                    coin.y = this.jarBottom - this.coinSize;
+                    coin.vy *= -this.bounceFactor;
+                    coin.vx *= 0.8;
+                    coin.bounced = true;
+                    playCoinClink();
+                } else {
+                    // Settle
+                    coin.y = this.jarBottom - this.coinSize;
+                    coin.vy = 0;
+                    coin.vx = 0;
+                    coin.vRotation = 0;
+                    coin.settled = true;
+                    coin.element.className = 'coin-settled';
+                    
+                    // Stack coins (move up slightly if too many at bottom)
+                    this.stackCoins();
+                }
+            }
+            
+            // Update visual
+            coin.element.style.left = `${coin.x}px`;
+            coin.element.style.top = `${coin.y}px`;
+            coin.element.style.transform = `rotate(${coin.rotation}deg)`;
+        });
+        
+        this.animationId = requestAnimationFrame(() => this.animate());
+    }
+    
+    stackCoins() {
+        // Simple stacking: move settled coins up if they're overlapping too much
+        const settledCoins = this.coins.filter(c => c.settled);
+        const stackHeight = settledCoins.length * 3; // Each coin contributes 3px to stack
+        
+        settledCoins.forEach((coin, index) => {
+            const targetY = this.jarBottom - this.coinSize - (index * 3);
+            if (coin.y > targetY) {
+                coin.y = targetY;
+                coin.element.style.top = `${coin.y}px`;
+            }
+        });
+    }
+    
+    clear() {
+        this.stop();
+        this.coins = [];
+        this.container.innerHTML = '';
+    }
+    
+    getCoinCount() {
+        return this.coins.length;
+    }
+}
+
+let coinPhysics = null;
+
+function initCoinPhysics() {
+    if (!coinPhysics) {
+        coinPhysics = new CoinPhysics(DOM.coinContainer);
+    }
+}
+
+function spawnFallingCoin() {
+    if (!coinPhysics) initCoinPhysics();
+    coinPhysics.spawnCoin();
+}
+
+function clearCoins() {
+    if (coinPhysics) {
+        coinPhysics.clear();
+    }
+}
+
+function playCoinClink() {
+    try {
+        initAudioContext();
+        const ctx = AppState.audio.audioContext;
+        
+        const oscillator = ctx.createOscillator();
+        const gain = ctx.createGain();
+        
+        oscillator.connect(gain);
+        gain.connect(ctx.destination);
+        
+        // Higher pitch "clink" sound
+        oscillator.frequency.value = 1800 + Math.random() * 400;
+        oscillator.type = 'sine';
+        
+        gain.gain.setValueAtTime(0.08, ctx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.15);
+        
+        oscillator.start(ctx.currentTime);
+        oscillator.stop(ctx.currentTime + 0.15);
+    } catch (e) {
+        // Silent fail
+    }
+}
+
+function addCoinToJar() {
+    // Visual: spawn a falling coin
+    spawnFallingCoin();
+    
+    // Sound: play clink
+    playCoinClink();
 }
 
 function togglePause() {
@@ -421,6 +614,7 @@ function stopTimer() {
     
     // Reset jar to empty
     DOM.jarPixelArt.src = AppState.jarFrames.empty;
+    clearCoins();
 
     // Reset buttons
     DOM.startBtn.classList.remove('hidden');
@@ -434,6 +628,11 @@ function completeTimer() {
     clearInterval(AppState.timer.intervalId);
     AppState.timer.isRunning = false;
     AppState.timer.isPaused = false;
+    
+    // Stop coin physics
+    if (coinPhysics) {
+        coinPhysics.stop();
+    }
 
     const totalCoins = AppState.rewards[AppState.timer.selectedDuration] || Math.ceil(AppState.timer.selectedDuration * 60);
     const earnedCoins = Math.max(1, totalCoins);
