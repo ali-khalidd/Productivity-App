@@ -801,13 +801,17 @@ function applyEquippedItems() {
 
     // Apply jar skin
     if (equipped.jar) {
-        const jar = AppState.shop.items.jars.find(j => j.id === equipped.jar);
-        if (jar) {
-            // Show the jar skin image when timer is not running
+        if (equipped.jar === 'jar_classic') {
+            // Default jar uses the frame system (has fill animations)
             if (!AppState.timer.isRunning) {
+                DOM.jarPixelArt.src = AppState.jarFrames.empty;
+            }
+        } else {
+            // Other jar skins show their static image
+            const jar = AppState.shop.items.jars.find(j => j.id === equipped.jar);
+            if (jar && !AppState.timer.isRunning) {
                 DOM.jarPixelArt.src = jar.image;
             }
-            // When timer is running, updateJarFrame() handles the frames
         }
     } else {
         // Default to empty classic jar
