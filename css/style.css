@@ -1,8 +1,8 @@
 :root {
     /* Pixel Art Color Palette */
-    --pixel-bg: #4a2b7a;
-    --pixel-dark: #362163;
-    --pixel-darker: #2a1947;
+    --pixel-bg: #7B68EE;
+    --pixel-dark: #6A5ACD;
+    --pixel-darker: #5A4AC0;
     --pixel-brown: #8b5a2b;
     --pixel-light-brown: #c4956a;
     --pixel-cream: #f5e6d3;
@@ -85,7 +85,7 @@ img {
     height: 100%;
     z-index: -1;
     pointer-events: none;
-    background: rgba(74, 43, 122, 0.3);
+    background: rgba(123, 104, 238, 0.3);
 }
 
 /* Placed Decorations (Draggable) */
