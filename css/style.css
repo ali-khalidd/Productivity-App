@@ -3,6 +3,8 @@
     --pixel-bg: #7B68EE;
     --pixel-dark: #6A5ACD;
     --pixel-darker: #5A4AC0;
+    --pixel-text: #FFFFFF;
+    --pixel-text-light: #D8D4E5;
     --pixel-brown: #8b5a2b;
     --pixel-light-brown: #c4956a;
     --pixel-cream: #f5e6d3;
@@ -13,10 +15,13 @@
     --pixel-red: #dc143c;
     --pixel-gray: #696969;
     --pixel-white: #f0f0f0;
+    
+    /* Floating stars */
+    --star-count: 12;
 
     /* Pixel Border Style */
     --pixel-border: 4px solid var(--pixel-dark);
-    --pixel-border-light: 2px solid var(--pixel-light-brown);
+    --pixel-border-light: 2px solid var(--pixel-text-light);
     
     /* Transitions */
     --transition-fast: 0.1s step-end;
@@ -35,7 +40,7 @@
 body {
     font-family: 'Nunito', sans-serif;
     background-color: var(--pixel-bg);
-    color: var(--pixel-cream);
+    color: var(--pixel-text);
     height: 100vh;
     overflow: hidden;
     line-height: 1.6;
@@ -88,6 +93,35 @@ img {
     background: rgba(123, 104, 238, 0.3);
 }
 
+/* Floating Stars (Habitica-style particles) */
+.floating-star {
+    position: fixed;
+    width: 16px;
+    height: 16px;
+    z-index: 0;
+    pointer-events: none;
+    opacity: 0.2;
+    animation: float-star linear infinite;
+    image-rendering: pixelated;
+}
+
+@keyframes float-star {
+    0% {
+        transform: translateY(0) rotate(0deg);
+        opacity: 0;
+    }
+    10% {
+        opacity: 0.2;
+    }
+    90% {
+        opacity: 0.2;
+    }
+    100% {
+        transform: translateY(-100vh) rotate(360deg);
+        opacity: 0;
+    }
+}
+
 /* Placed Decorations (Draggable) */
 #placed-decorations {
     position: fixed;
@@ -112,7 +146,7 @@ img {
 
 .placed-item:hover {
     transform: scale(1.1);
-    filter: drop-shadow(0 0 8px var(--pixel-gold));
+    filter: drop-shadow(0 0 8px var(--pixel-text));
 }
 
 .placed-item.dragging {
@@ -172,7 +206,7 @@ img {
     align-items: center;
     gap: 0.5rem;
     font-weight: 600;
-    color: var(--pixel-gold);
+    color: var(--pixel-text);
     font-size: 0.85rem;
 }
 
@@ -180,7 +214,7 @@ img {
 .btn {
     padding: 0.5rem 1rem;
     border: 3px solid var(--pixel-dark);
-    font-family: 'Press Start 2P', cursive;
+    font-family: 'Nunito', sans-serif;
     font-weight: 400;
     font-size: 0.65rem;
     cursor: pointer;
@@ -215,11 +249,11 @@ img {
 
 .btn-secondary {
     background: var(--pixel-brown);
-    color: var(--pixel-cream);
+    color: var(--pixel-text);
 }
 
 .btn-secondary:hover {
-    background: var(--pixel-light-brown);
+    background: var(--pixel-text-light);
 }
 
 .btn-warning {
@@ -254,7 +288,7 @@ img {
 #app-title {
     font-family: 'Press Start 2P', cursive;
     font-size: 1.5rem;
-    color: var(--pixel-gold);
+    color: var(--pixel-text);
     text-align: center;
     margin-bottom: 0;
     line-height: 1.5;
@@ -262,7 +296,7 @@ img {
 }
 
 #app-subtitle {
-    color: var(--pixel-light-brown);
+    color: var(--pixel-text-light);
     font-size: 0.8rem;
     text-align: center;
     margin-bottom: 0.5rem;
@@ -280,17 +314,17 @@ img {
 }
 
 #timer-display {
-    font-family: 'Press Start 2P', cursive;
+    font-family: 'Nunito', sans-serif;
     font-size: 2rem;
     font-weight: 400;
-    color: var(--pixel-gold);
+    color: var(--pixel-text);
     letter-spacing: 0.05em;
     text-shadow: 2px 2px 0 var(--pixel-dark);
     line-height: 1.2;
 }
 
 #timer-label {
-    color: var(--pixel-light-brown);
+    color: var(--pixel-text-light);
     font-size: 0.8rem;
     font-weight: 600;
     margin-bottom: 0.25rem;
@@ -309,8 +343,8 @@ img {
     padding: 0.5rem 0.75rem;
     border: 3px solid var(--pixel-brown);
     background: var(--pixel-dark);
-    color: var(--pixel-cream);
-    font-family: 'Press Start 2P', cursive;
+    color: var(--pixel-text);
+    font-family: 'Nunito', sans-serif;
     font-weight: 400;
     font-size: 0.6rem;
     cursor: pointer;
@@ -321,11 +355,11 @@ img {
 .duration-btn:hover {
     transform: translate(-1px, -1px);
     box-shadow: 4px 4px 0 var(--pixel-dark);
-    border-color: var(--pixel-gold);
+    border-color: var(--pixel-text);
 }
 
 .duration-btn.selected {
-    background: var(--pixel-gold);
+    background: var(--pixel-text);
     color: var(--pixel-dark);
     border-color: var(--pixel-dark);
     box-shadow: 3px 3px 0 var(--pixel-dark);
@@ -382,8 +416,8 @@ img {
 }
 
 #progress-text {
-    font-family: 'Press Start 2P', cursive;
-    color: var(--pixel-gold);
+    font-family: 'Nunito', sans-serif;
+    color: var(--pixel-text);
     font-size: 0.7rem;
 }
 
@@ -461,8 +495,8 @@ img {
 
 #jar-label {
     margin-top: 0.5rem;
-    font-family: 'Press Start 2P', cursive;
-    color: var(--pixel-light-brown);
+    font-family: 'Nunito', sans-serif;
+    color: var(--pixel-text-light);
     font-size: 0.6rem;
     text-align: center;
 }
@@ -472,7 +506,7 @@ img {
     text-align: center;
     padding: 1rem;
     background: var(--pixel-dark);
-    border: 4px solid var(--pixel-gold);
+    border: 4px solid var(--pixel-text);
     border-radius: 0;
     box-shadow: 4px 4px 0 var(--pixel-dark-gold);
     animation: reward-appear 0.5s step-end;
@@ -490,15 +524,15 @@ img {
 }
 
 #jar-reward p {
-    color: var(--pixel-cream);
+    color: var(--pixel-text);
     font-size: 0.8rem;
     margin-bottom: 0.75rem;
     font-family: 'Nunito', sans-serif;
 }
 
 #reward-amount {
-    color: var(--pixel-gold);
-    font-family: 'Press Start 2P', cursive;
+    color: var(--pixel-text);
+    font-family: 'Nunito', sans-serif;
     font-size: 1rem;
 }
 
@@ -509,7 +543,7 @@ img {
     left: 0;
     width: 100%;
     height: 100%;
-    background: rgba(26, 15, 8, 0.85);
+    background: rgba(90, 74, 192, 0.85);
     display: flex;
     justify-content: center;
     align-items: center;
@@ -549,8 +583,8 @@ img {
 }
 
 .modal-header h2 {
-    font-family: 'Press Start 2P', cursive;
-    color: var(--pixel-gold);
+    font-family: 'Nunito', sans-serif;
+    color: var(--pixel-text);
     font-size: 1rem;
     text-shadow: 2px 2px 0 var(--pixel-dark);
 }
@@ -562,7 +596,7 @@ img {
     font-size: 1.2rem;
     cursor: pointer;
     padding: 0.25rem 0.5rem;
-    font-family: 'Press Start 2P', cursive;
+    font-family: 'Nunito', sans-serif;
     box-shadow: 2px 2px 0 var(--pixel-dark);
 }
 
@@ -587,8 +621,8 @@ img {
     padding: 0.5rem 0.75rem;
     border: 3px solid var(--pixel-brown);
     background: var(--pixel-dark);
-    color: var(--pixel-cream);
-    font-family: 'Press Start 2P', cursive;
+    color: var(--pixel-text);
+    font-family: 'Nunito', sans-serif;
     font-size: 0.55rem;
     cursor: pointer;
     transition: all 0.1s step-end;
@@ -596,9 +630,9 @@ img {
 }
 
 .shop-tab.active, .inventory-tab.active {
-    background: var(--pixel-gold);
+    background: var(--pixel-text);
     color: var(--pixel-dark);
-    border-color: var(--pixel-gold);
+    border-color: var(--pixel-text);
 }
 
 /* Shop Items Grid */
@@ -623,7 +657,7 @@ img {
 .shop-item:hover, .inventory-item:hover {
     transform: translate(-2px, -2px);
     box-shadow: 5px 5px 0 var(--pixel-dark);
-    border-color: var(--pixel-gold);
+    border-color: var(--pixel-text);
 }
 
 .shop-item.purchased {
@@ -653,16 +687,16 @@ img {
 }
 
 .item-name {
-    font-family: 'Press Start 2P', cursive;
+    font-family: 'Nunito', sans-serif;
     font-weight: 400;
-    color: var(--pixel-cream);
+    color: var(--pixel-text);
     text-align: center;
     font-size: 0.6rem;
 }
 
 .item-price {
-    color: var(--pixel-gold);
-    font-family: 'Press Start 2P', cursive;
+    color: var(--pixel-text);
+    font-family: 'Nunito', sans-serif;
     font-size: 0.55rem;
     display: flex;
     align-items: center;
@@ -672,7 +706,7 @@ img {
 .buy-btn, .equip-btn {
     padding: 0.4rem 0.8rem;
     border: 3px solid var(--pixel-dark);
-    font-family: 'Press Start 2P', cursive;
+    font-family: 'Nunito', sans-serif;
     font-size: 0.55rem;
     cursor: pointer;
     transition: all 0.1s step-end;
@@ -718,8 +752,8 @@ img {
 }
 
 #active-decoration-preview h3 {
-    font-family: 'Press Start 2P', cursive;
-    color: var(--pixel-gold);
+    font-family: 'Nunito', sans-serif;
+    color: var(--pixel-text);
     margin-bottom: 0.75rem;
     font-size: 0.7rem;
 }
@@ -738,8 +772,8 @@ img {
     background: var(--pixel-bg);
     border: 2px solid var(--pixel-brown);
     font-size: 0.7rem;
-    color: var(--pixel-cream);
-    font-family: 'Press Start 2P', cursive;
+    color: var(--pixel-text);
+    font-family: 'Nunito', sans-serif;
     font-size: 0.55rem;
 }
 
@@ -769,16 +803,16 @@ img {
 }
 
 .stat-value {
-    font-family: 'Press Start 2P', cursive;
+    font-family: 'Nunito', sans-serif;
     font-size: 1.2rem;
     font-weight: 400;
-    color: var(--pixel-gold);
+    color: var(--pixel-text);
 }
 
 .stat-label {
-    color: var(--pixel-light-brown);
+    color: var(--pixel-text-light);
     font-size: 0.65rem;
-    font-family: 'Press Start 2P', cursive;
+    font-family: 'Nunito', sans-serif;
 }
 
 /* Session List */
@@ -801,11 +835,11 @@ img {
 }
 
 .session-entry:hover {
-    border-color: var(--pixel-gold);
+    border-color: var(--pixel-text);
 }
 
 .session-date {
-    color: var(--pixel-light-brown);
+    color: var(--pixel-text-light);
     font-weight: 600;
     font-size: 0.75rem;
     font-family: 'Nunito', sans-serif;
@@ -818,14 +852,14 @@ img {
 }
 
 .session-duration {
-    color: var(--pixel-cream);
-    font-family: 'Press Start 2P', cursive;
+    color: var(--pixel-text);
+    font-family: 'Nunito', sans-serif;
     font-size: 0.55rem;
 }
 
 .session-coins {
-    color: var(--pixel-gold);
-    font-family: 'Press Start 2P', cursive;
+    color: var(--pixel-text);
+    font-family: 'Nunito', sans-serif;
     font-size: 0.55rem;
 }
 
@@ -833,7 +867,7 @@ img {
     padding: 0.2rem 0.5rem;
     border: 2px solid var(--pixel-dark);
     font-size: 0.6rem;
-    font-family: 'Press Start 2P', cursive;
+    font-family: 'Nunito', sans-serif;
 }
 
 .status-completed {
@@ -842,7 +876,7 @@ img {
 }
 
 .status-partial {
-    background: var(--pixel-gold);
+    background: var(--pixel-text);
     color: var(--pixel-dark);
 }
 
@@ -870,7 +904,7 @@ img {
 }
 
 .warning-content p {
-    color: var(--pixel-cream);
+    color: var(--pixel-text);
     margin-bottom: 0.5rem;
     font-family: 'Nunito', sans-serif;
 }
@@ -879,7 +913,7 @@ img {
     font-weight: 700;
     font-size: 1rem;
     color: var(--pixel-red);
-    font-family: 'Press Start 2P', cursive;
+    font-family: 'Nunito', sans-serif;
 }
 
 /* Audio Controls */
@@ -908,8 +942,8 @@ img {
     padding: 0.5rem 1rem;
     border: 2px solid var(--pixel-brown);
     background: var(--pixel-bg);
-    color: var(--pixel-cream);
-    font-family: 'Press Start 2P', cursive;
+    color: var(--pixel-text);
+    font-family: 'Nunito', sans-serif;
     font-size: 0.55rem;
     cursor: pointer;
     transition: all 0.1s step-end;
@@ -919,13 +953,13 @@ img {
 .audio-option:hover {
     transform: translate(-1px, -1px);
     box-shadow: 3px 3px 0 var(--pixel-dark);
-    border-color: var(--pixel-gold);
+    border-color: var(--pixel-text);
 }
 
 .audio-option.active {
-    background: var(--pixel-gold);
+    background: var(--pixel-text);
     color: var(--pixel-dark);
-    border-color: var(--pixel-gold);
+    border-color: var(--pixel-text);
 }
 
 /* Utility Classes */
@@ -949,7 +983,7 @@ img {
 }
 
 ::-webkit-scrollbar-thumb:hover {
-    background: var(--pixel-gold);
+    background: var(--pixel-text);
 }
 
 /* Responsive Design */

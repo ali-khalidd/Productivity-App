@@ -124,6 +124,7 @@ function init() {
     setupEventListeners();
     setupTabDetection();
     setupDragAndDrop();
+    createFloatingStars();
     renderShop('backgrounds');
     renderInventory('backgrounds');
     updateUI();
@@ -227,6 +228,35 @@ function setupTabDetection() {
             showTabWarning();
         }
     });
+}
+
+// ==========================================
+// FLOATING STARS (Habitica-style particles)
+// ==========================================
+
+function createFloatingStars() {
+    const starImages = [
+        'assets/pixel-art/particles/star_white.png',
+        'assets/pixel-art/particles/star_gold.png',
+        'assets/pixel-art/particles/star_pink.png',
+        'assets/pixel-art/particles/star_blue.png'
+    ];
+    
+    const container = document.getElementById('app');
+    const starCount = 12;
+    
+    for (let i = 0; i < starCount; i++) {
+        const star = document.createElement('img');
+        star.src = starImages[Math.floor(Math.random() * starImages.length)];
+        star.className = 'floating-star';
+        star.style.left = `${Math.random() * 100}%`;
+        star.style.top = `${Math.random() * 100}%`;
+        star.style.animationDuration = `${15 + Math.random() * 20}s`;
+        star.style.animationDelay = `${Math.random() * 10}s`;
+        star.style.width = `${12 + Math.random() * 8}px`;
+        star.style.height = `${12 + Math.random() * 8}px`;
+        container.appendChild(star);
+    }
 }
 
 // ==========================================
