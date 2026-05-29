@@ -476,35 +476,47 @@ img {
     transform: scale(1.05);
 }
 
-/* Coin physics container */
+/* Coin drop animation */
 #coin-physics-container {
     position: absolute;
-    top: 50%;
+    top: 60px;
     left: 50%;
-    transform: translate(-50%, -50%);
-    width: 180px;
-    height: 220px;
+    transform: translateX(-50%);
+    width: 200px;
+    height: 240px;
     pointer-events: none;
+    z-index: 10;
     overflow: hidden;
-    z-index: 2;
 }
 
-.falling-coin {
+.coin-drop {
     position: absolute;
     width: 32px;
     height: 32px;
     image-rendering: pixelated;
     image-rendering: crisp-edges;
-    z-index: 3;
-    will-change: transform;
+    animation: coin-fall 1.5s ease-in forwards;
+    pointer-events: none;
+    z-index: 11;
 }
 
-.coin-settled {
-    position: absolute;
-    width: 32px;
-    height: 32px;
-    image-rendering: pixelated;
-    z-index: 2;
+@keyframes coin-fall {
+    0% {
+        transform: translateY(0) rotate(0deg);
+        opacity: 1;
+    }
+    60% {
+        transform: translateY(180px) rotate(180deg);
+        opacity: 1;
+    }
+    80% {
+        transform: translateY(200px) rotate(270deg);
+        opacity: 1;
+    }
+    100% {
+        transform: translateY(200px) rotate(360deg);
+        opacity: 0.8;
+    }
 }
 
 #jar-coins {
