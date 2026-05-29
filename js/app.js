@@ -24,7 +24,7 @@ const AppState = {
         pendingReward: 0
     },
     rewards: {
-        0.00833: 1,
+        0.00833: 10,  // Test mode: 10 coins for visual feedback
         1: 100,
         2: 200,
         4: 500,
@@ -350,10 +350,16 @@ function updateTimer() {
     // Spawn falling coins based on progress
     const durationHours = AppState.timer.selectedDuration;
     const totalCoins = AppState.rewards[durationHours] || Math.ceil(durationHours * 60);
-    const displayCoins = Math.min(totalCoins, 25);
+    // Visual cap: show enough coins for visible feedback but not too many
+    const displayCoins = Math.min(totalCoins, durationHours < 0.01 ? 10 : 50);
     
-    // Calculate expected coins based on progress - use ceiling for better distribution
+    // Calculate expected coins based on progress
     const expectedCoins = Math.ceil((progress / 100) * displayCoins);
+    
+    // Debug logging for coin spawning
+    if (AppState.timer.jarCoins < expectedCoins) {
+        console.log(`Progress: ${progress.toFixed(1)}%, jarCoins: ${AppState.timer.jarCoins}, expected: ${expectedCoins}, spawning ${expectedCoins - AppState.timer.jarCoins} coin(s)`);
+    }
     
     // Spawn coins if needed
     while (AppState.timer.jarCoins < expectedCoins) {

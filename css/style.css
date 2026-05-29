@@ -476,16 +476,16 @@ img {
     transform: scale(1.05);
 }
 
-/* Coin drop animation */
+/* Coin drop animation - positioned over jar opening */
 #coin-physics-container {
     position: absolute;
-    top: 20px;
+    top: 50%;
     left: 50%;
-    transform: translateX(-50%);
-    width: 200px;
-    height: 240px;
+    transform: translate(-50%, -50%);
+    width: 160px;
+    height: 280px;
     pointer-events: none;
-    z-index: 100;
+    z-index: 10;
 }
 
 .coin-drop {
@@ -496,22 +496,25 @@ img {
     image-rendering: crisp-edges;
     animation: coin-fall 1.5s ease-in forwards;
     pointer-events: none;
-    z-index: 101;
+    z-index: 11;
     opacity: 1;
 }
 
 @keyframes coin-fall {
     0% {
-        transform: translateY(0) rotate(0deg);
+        top: -40px;
+        transform: rotate(0deg);
         opacity: 1;
     }
-    70% {
-        transform: translateY(180px) rotate(250deg);
+    80% {
+        top: 230px;
+        transform: rotate(280deg);
         opacity: 1;
     }
     100% {
-        transform: translateY(200px) rotate(360deg);
-        opacity: 0.7;
+        top: 250px;
+        transform: rotate(360deg);
+        opacity: 0.8;
     }
 }
 
