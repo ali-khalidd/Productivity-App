@@ -889,6 +889,8 @@ function addSessionToHistory(duration, coins, completed) {
     };
 
     AppState.history.sessions.unshift(session);
+    console.log('Session added:', session);
+    console.log('Total sessions:', AppState.history.sessions.length);
     
     // Update streak
     updateStreak();
@@ -920,6 +922,7 @@ function updateStreak() {
     }
 
     AppState.history.lastSessionDate = today;
+    console.log('Streak updated:', AppState.history.streak);
 }
 
 function updateHistoryUI() {
@@ -938,7 +941,7 @@ function updateHistoryUI() {
     DOM.sessionList.innerHTML = '';
     
     if (sessions.length === 0) {
-        DOM.sessionList.innerHTML = '<p style="color: var(--brown); text-align: center;">No sessions yet. Start focusing!</p>';
+        DOM.sessionList.innerHTML = '<p style="color: var(--pixel-text-light); text-align: center; font-family: Nunito, sans-serif; padding: 2rem;">No sessions yet. Start focusing!</p>';
     } else {
         sessions.slice(0, 10).forEach(session => {
             const date = new Date(session.date);
@@ -951,7 +954,7 @@ function updateHistoryUI() {
                 <span class="session-date">${dateStr} at ${timeStr}</span>
                 <div class="session-details">
                     <span class="session-duration">${session.duration}h</span>
-                    <span class="session-coins">🪙 ${session.coins}</span>
+                    <span class="session-coins"><img src="assets/pixel-art/coins/coin_fancy.png" class="pixel-icon-small" style="width: 16px; height: 16px;"> ${session.coins}</span>
                     <span class="session-status ${session.completed ? 'status-completed' : 'status-partial'}">
                         ${session.completed ? 'Completed' : 'Partial'}
                     </span>
