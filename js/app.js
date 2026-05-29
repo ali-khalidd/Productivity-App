@@ -354,7 +354,10 @@ function updateTimer() {
     const displayCoins = Math.min(totalCoins, durationHours < 0.01 ? 10 : 50);
     
     // Calculate expected coins based on progress
-    const expectedCoins = Math.ceil((progress / 100) * displayCoins);
+    // Test mode uses ceil for faster distribution, long sessions use floor to avoid 0% coin
+    const expectedCoins = durationHours < 0.01 
+        ? Math.ceil((progress / 100) * displayCoins)
+        : Math.floor((progress / 100) * displayCoins);
     
     // Debug logging for coin spawning
     if (AppState.timer.jarCoins < expectedCoins) {
