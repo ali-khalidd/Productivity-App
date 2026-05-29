@@ -402,14 +402,14 @@ function addCoinToJar() {
     const coin = document.createElement('img');
     coin.src = 'assets/pixel-art/coins/coin_fancy.png';
     coin.className = 'coin-drop';
-    coin.style.width = '32px';
-    coin.style.height = '32px';
+    coin.style.width = '64px';
+    coin.style.height = '64px';
     coin.style.display = 'block';
     
-    // Random position within jar width
-    const randomX = 20 + Math.random() * 120;
+    // Random position within jar width (container is 160px, coin is 64px)
+    const randomX = 10 + Math.random() * 86;
     coin.style.left = randomX + 'px';
-    coin.style.top = '-40px';
+    coin.style.top = '-60px';
     
     // Add to container
     container.appendChild(coin);

@@ -490,8 +490,8 @@ img {
 
 .coin-drop {
     position: absolute;
-    width: 32px;
-    height: 32px;
+    width: 64px;
+    height: 64px;
     image-rendering: pixelated;
     image-rendering: crisp-edges;
     animation: coin-fall 1.5s ease-in forwards;
