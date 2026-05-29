@@ -440,8 +440,10 @@ function stopTimer() {
     DOM.timerDisplay.textContent = '00:00:00';
     DOM.progressBar.style.width = '0%';
     DOM.progressText.textContent = '0%';
-    DOM.jarFill.style.height = '0%';
     DOM.timerLabel.textContent = 'Choose your focus time';
+    
+    // Reset jar to empty
+    DOM.jarPixelArt.src = AppState.jarFrames.empty;
 
     // Reset buttons
     DOM.startBtn.classList.remove('hidden');
@@ -469,8 +471,10 @@ function completeTimer() {
     DOM.timerDisplay.textContent = '00:00:00';
     DOM.progressBar.style.width = '0%';
     DOM.progressText.textContent = '0%';
-    DOM.jarFill.style.height = '0%';
     DOM.timerLabel.textContent = 'Session complete! Great job!';
+
+    // Show full jar
+    DOM.jarPixelArt.src = AppState.jarFrames.full;
 
     // Reset buttons
     DOM.startBtn.classList.remove('hidden');
@@ -711,12 +715,10 @@ function applyEquippedItems() {
         DOM.bgLayer.style.backgroundColor = 'var(--pixel-bg)';
     }
 
-    // Apply jar skin
-    if (equipped.jar) {
-        const jar = AppState.shop.items.jars.find(j => j.id === equipped.jar);
-        if (jar) {
-            DOM.jarPixelArt.src = jar.image;
-        }
+    // Apply jar skin - use frame system
+    // If timer is not running, show empty frame
+    if (!AppState.timer.isRunning) {
+        DOM.jarPixelArt.src = AppState.jarFrames.empty;
     }
 }
 
