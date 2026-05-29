@@ -1,4 +1,4 @@
-# Cosy Jar - Focus & Flourish
+# Focus Room - Focus & Flourish
 
 A cozy productivity app that helps you stay focused by filling a virtual jar with coins as you study or work.
 

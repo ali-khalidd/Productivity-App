@@ -1,5 +1,5 @@
 /**
- * Cosy Jar - Focus & Flourish
+ * Focus Room - Focus & Flourish
  * Main Application JavaScript
  */
 
@@ -1311,7 +1311,7 @@ function closeAllModals() {
 // LOCAL STORAGE PERSISTENCE
 // ==========================================
 
-const STORAGE_KEY = 'cosyJarData';
+const STORAGE_KEY = 'focusRoomData';
 
 function saveState() {
     const data = {
