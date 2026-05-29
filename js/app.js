@@ -406,10 +406,10 @@ function addCoinToJar() {
     coin.style.height = '64px';
     coin.style.display = 'block';
     
-    // Random position within jar width (container is 160px, coin is 64px)
-    const randomX = 10 + Math.random() * 86;
+    // Random position within jar width (container is 160px, decoration is 128px)
+    const randomX = 5 + Math.random() * 27;
     coin.style.left = randomX + 'px';
-    coin.style.top = '-60px';
+    coin.style.top = '-80px';
     
     // Add to container
     container.appendChild(coin);
