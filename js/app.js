@@ -161,10 +161,10 @@ function setupEventListeners() {
     // Test coin button
     const testCoinBtn = document.getElementById('test-coin-btn');
     if (testCoinBtn) {
-        testCoinBtn.addEventListener('click', () => {
-            console.log('Test coin button clicked');
-            spawnCoinInJar();
-        });
+            testCoinBtn.addEventListener('click', () => {
+                console.log('Test coin button clicked');
+                addCoinToJar();
+            });
     }
 
     // Modals
