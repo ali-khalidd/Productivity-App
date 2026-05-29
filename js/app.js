@@ -374,6 +374,14 @@ function updateTimer() {
 }
 
 function updateJarFrame(progress) {
+    const equippedJar = AppState.inventory.equipped.jar;
+    
+    // If non-classic skin is equipped, DON'T overwrite with classic frames
+    if (equippedJar && equippedJar !== 'jar_classic') {
+        return; // Keep the static jar skin image
+    }
+    
+    // Only use fill frames for the classic jar
     const frames = AppState.jarFrames;
     let frameSrc = frames.empty;
     
