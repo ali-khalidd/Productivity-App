@@ -350,7 +350,10 @@ function updateTimer() {
     // Spawn falling coins based on progress
     const durationHours = AppState.timer.selectedDuration;
     const totalCoins = AppState.rewards[durationHours] || Math.ceil(durationHours * 60);
-    const expectedCoins = Math.floor((progress / 100) * Math.min(totalCoins, 25));
+    const displayCoins = Math.min(totalCoins, 25);
+    
+    // Calculate expected coins based on progress - use ceiling for better distribution
+    const expectedCoins = Math.ceil((progress / 100) * displayCoins);
     
     // Spawn coins if needed
     while (AppState.timer.jarCoins < expectedCoins) {

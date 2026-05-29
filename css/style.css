@@ -486,7 +486,6 @@ img {
     height: 240px;
     pointer-events: none;
     z-index: 100;
-    border: 2px dashed rgba(255, 255, 0, 0.3);
 }
 
 .coin-drop {
