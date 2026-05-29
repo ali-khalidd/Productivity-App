@@ -1336,6 +1336,32 @@ function saveState() {
 
 function loadState() {
     try {
+        // Migration: Check for old storage key and migrate to new
+        const oldData = localStorage.getItem('cosyJarData');
+        if (oldData) {
+            const data = JSON.parse(oldData);
+            if (data.inventory) {
+                AppState.inventory.purchased = data.inventory.purchased || ['jar_classic'];
+                AppState.inventory.equipped = data.inventory.equipped || {
+                    background: null,
+                    jar: 'jar_classic',
+                    decorations: []
+                };
+                AppState.inventory.placedDecorations = data.inventory.placedDecorations || [];
+            }
+            if (data.coins) {
+                AppState.coins.balance = data.coins.balance || 0;
+                AppState.coins.totalEarned = data.coins.totalEarned || 0;
+            }
+            if (data.history) {
+                AppState.history = data.history || [];
+            }
+            // Save to new key and remove old key
+            saveState();
+            localStorage.removeItem('cosyJarData');
+            return;
+        }
+
         const saved = localStorage.getItem(STORAGE_KEY);
         if (saved) {
             const data = JSON.parse(saved);
