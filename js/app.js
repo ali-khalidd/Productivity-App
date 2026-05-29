@@ -159,7 +159,9 @@ function setupEventListeners() {
     DOM.claimRewardBtn.addEventListener('click', claimReward);
 
     // Modals
-    document.getElementById('shop-toggle').addEventListener('click', () => openModal(DOM.shopModal));
+    document.getElementById('shop-toggle').addEventListener('click', () => {
+        openModal(DOM.shopModal);
+    });
     document.getElementById('inventory-toggle').addEventListener('click', () => openModal(DOM.inventoryModal));
     document.getElementById('history-toggle').addEventListener('click', () => {
         updateHistoryUI();
@@ -353,31 +355,6 @@ function updateJarFrame(progress) {
 
 function addCoinToJar() {
     // Coin sound effect only - visual handled by frame animation
-    if (AppState.audio.isPlaying) {
-        playCoinSound();
-    }
-}
-    } else {
-        // Calculate how many coins should be shown based on progress
-        const expectedCoins = Math.floor((progress / 100) * totalCoins);
-        
-        while (AppState.timer.jarCoins < expectedCoins) {
-            AppState.timer.jarCoins++;
-            addCoinToJar();
-        }
-    }
-
-    DOM.jarFillText.textContent = `${AppState.timer.jarCoins} / ${totalCoins} coins`;
-}
-
-function addCoinToJar() {
-    const coin = document.createElement('img');
-    coin.src = 'assets/pixel-art/coins/coin.png';
-    coin.className = 'coin';
-    coin.alt = 'coin';
-    DOM.jarCoins.appendChild(coin);
-    
-    // Play subtle coin sound if audio is enabled
     if (AppState.audio.isPlaying) {
         playCoinSound();
     }
